@@ -20,7 +20,7 @@ class CustomHandlerInterceptor(
     override fun postHandle(request: HttpServletRequest, response: HttpServletResponse,
                             handler: Any, modelAndView: ModelAndView?) {
         try {
-            if ("/login" != request.requestURI) {
+            if ("/login" != request.requestURI && "/join" != request.requestURI ) {
                 val context = SecurityContextHolder.getContext()
                 val member: Member = context.authentication.principal as Member
                 val currentPage = request.requestURI

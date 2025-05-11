@@ -1,12 +1,12 @@
 function number_format(number, decimals, dec_point, thousands_sep) {
     number = (number + '').replace(',', '').replace(' ', '');
-    var n = !isFinite(+number) ? 0 : +number,
+    let n = !isFinite(+number) ? 0 : +number,
         prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
         sep = (typeof thousands_sep === 'undefined') ? ',' : thousands_sep,
         dec = (typeof dec_point === 'undefined') ? '.' : dec_point,
         s = '',
         toFixedFix = function (n, prec) {
-            var k = Math.pow(10, prec);
+            let k = Math.pow(10, prec);
             return '' + Math.round(n * k) / k;
         };
     // Fix for IE parseFloat(0.55).toFixed(0) = 0;
@@ -20,7 +20,7 @@ function number_format(number, decimals, dec_point, thousands_sep) {
     }
     return s.join(dec);
 }
-// Pie Chart
+
 function chart(myChart) {
     let colorList = []
     let hoverList = []
@@ -70,6 +70,11 @@ function chart(myChart) {
                 display: false,
             },
             cutoutPercentage: 80,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
         },
     })
 }

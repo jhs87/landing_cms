@@ -28,7 +28,7 @@ import kotlin.collections.HashMap
  * @property memberService
  * @property memberRelateKeyService
  * @property landingInfoService
- * @constructor Create empty Member controller
+ * @constructor Create an empty Member controller
  */
 @Controller
 class MemberController(private val memberService: MemberService,
@@ -140,7 +140,7 @@ class MemberController(private val memberService: MemberService,
     /**
      * Member check
      *
-     * @param memberEdit
+     * @param memberId
      * @return
      */
     @GetMapping("/members/idCheck")
@@ -170,7 +170,7 @@ class MemberController(private val memberService: MemberService,
     @ResponseBody
     @PostMapping("/members/edit")
     fun memberEdit(@ModelAttribute memberEdit: MemberDTO.MemberEdit, request: HttpServletRequest,
-                   @AuthenticationPrincipal principal: Member): String {
+                   @AuthenticationPrincipal principal: Member): ModelAndView {
         // 사용자 정보 수정 처리
         val member: Member = memberService.getMember(memberEdit.mNo!!)
         if(principal.getAuthRole() == "ADMIN") {
@@ -191,8 +191,7 @@ class MemberController(private val memberService: MemberService,
                 memberRelateKeyService.saveAll(memberRelateList)
             }
         }
-        val result = "<script>alert('본인 정보 수정일 경우 로그아웃 후 다시 로그인 해주셔야 반영이 됩니다.'); history.back();</script>"
-        return result
+        return ModelAndView("redirect:/members")
     }
 
     @PutMapping("/members/pwd")
@@ -202,7 +201,7 @@ class MemberController(private val memberService: MemberService,
         return ResponseEntity(HttpStatus.OK)
     }
 
-    @GetMapping("/join")
+    /*@GetMapping("/join")
     fun adminJoin(): ModelAndView {
         val memberReg = MemberReg()
         memberReg.memberId = "admin"
@@ -213,6 +212,6 @@ class MemberController(private val memberService: MemberService,
         memberReg.phone = "01092101480"
         memberService.save(Member(memberReg, BCryptPasswordEncoder()))
         return ModelAndView("redirect:/")
-    }
+    }*/
 
 }

@@ -10,7 +10,7 @@
     </div>
     <div class="d-flex justify-content-between">
         <div class="text-left">
-            <span class="text-gray">접수목록 <i class="mx-1 bi bi-caret-right-square"></i></span>
+            <span class="text-gray">접수 목록 <i class="mx-1 bi bi-caret-right-square"></i></span>
             <span class="text-gray-800 font-weight-bold" th:text="${landingTitle + ' 데이터'}"></span>
         </div>
         <form id="downloadForm" th:action="@{/excelDownload}" method="get">
@@ -34,14 +34,14 @@
                         </tr>
                         </thead>
                         <colgroup>
-                            <col th:each="head : ${headList}" th:width="${(75 / headList.size()) + '%'}" />
-                            <col width="20%">
+                            <col th:each="head : ${headList}" th:style="${'width:' + (75 / headList.size()) + '%'}" />
+                            <col style="width:25%">
                         </colgroup>
                         <tbody>
                         <tr class="details-table" th:each="itam : ${dataList}" th:data-id="${itam.dNo}">
                             <td class="py-1" th:each="num : ${#numbers.sequence(0, headList.size()-1)}"
                                 th:text="${@jsonUtil.parseData(headList[num].keyName, itam.data)}"></td>
-                            <td th:text="${#temporals.format(itam.regDate,'yyyy-MM-dd HH:mm:ss')}">2023-04-25 12:12:12</td>
+                            <td th:text="${#temporals.format(itam.regDate,'yyyy년 MM월 dd일 HH시 mm분 ss초')}">2023-04-25 12:12:12</td>
                         </tr>
                         </tbody>
                     </table>

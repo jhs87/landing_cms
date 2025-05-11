@@ -31,8 +31,13 @@
                             <div class="col-lg-12 d-flex">
                                 <div class="col-lg-4 bg-login-image"></div>
                                 <div class="col-lg-8 p-5">
-                                    <div class="text-center">
-                                        <h1 class="h4 text-primary mb-4">LANDING CMS LOGIN</h1>
+                                    <div class="w-100 d-flex justify-content-around">
+                                        <div class="w-50 text-center">
+                                            <h1 class="h4 text-primary mb-4">CMS LOGIN</h1>
+                                        </div>
+                                        <div class="w-50 text-center">
+                                            <a href="/join"><h1 class="h4 text-secondary mb-4">CMS JOIN</h1></a>
+                                        </div>
                                     </div>
                                     <form class="user" th:action="@{/login-proc}" method="post">
                                         <input type="hidden" th:value="${errorMsg}" id="error">
@@ -47,14 +52,14 @@
                                                    id="password" name="password" placeholder="Password">
                                             <label class="form-label" for="password">Password</label>
                                         </div>
-                                        <div class="input-form form-group">
+                                        <!--<div class="input-form form-group">
                                             <div class="form-check">
                                                 <label class="form-check-label text-muted">
                                                     <input type="checkbox" class="form-check-input" name="remember-me">
                                                      Keep me signed in
                                                 </label>
                                             </div>
-                                        </div>
+                                        </div>-->
                                         <div class="input-form form-group">
                                             <button type="submit" class="btn btn-outline-primary btn-user btn-block">로그인</button>
                                         </div>

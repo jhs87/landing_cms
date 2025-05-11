@@ -39,6 +39,7 @@ class WebSecurityConfig(private val memberServiceImpl: MemberServiceImpl) {
         "/logout",
         "/join",
         "/reg",
+        "/members/**",
         "/lbCheck"
     )
 
@@ -55,7 +56,7 @@ class WebSecurityConfig(private val memberServiceImpl: MemberServiceImpl) {
             .cors(Customizer.withDefaults())
             .csrf(Customizer.withDefaults())
             .authorizeHttpRequests { authorize -> authorize
-                .requestMatchers("/members/**", "/landing/**", "/landing/**", "/dataKey/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/landing/**", "/landing/**", "/dataKey/**").hasAuthority("ROLE_ADMIN")
                 .requestMatchers(*whiteList).permitAll()
                 .requestMatchers(*ignoring).permitAll()
                 .requestMatchers("/**").hasAnyAuthority(*authList)
