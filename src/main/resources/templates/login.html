@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Landing-CMS Login</title>
+    <link rel="icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/plugins/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <!-- Custom styles for this template-->
+    <link th:href="@{/css/admin.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/landing-custom.css}" rel="stylesheet" type="text/css">
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/plugins/jquery/jquery.min.js}"></script>
+    <script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/plugins/jquery-easing/jquery.easing.min.js}"></script>
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/js/admin.min.js}"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Outer Row -->
+        <div class="row justify-content-center align-items-center">
+            <div class="col-xl-10 col-lg-12 col-md-9">
+                <div class="card o-hidden br-20 shadow-lg mt-10">
+                    <div class="card-body p-0">
+                        <!-- Nested Row within Card Body -->
+                        <div class="row">
+                            <div class="col-lg-12 d-flex">
+                                <div class="col-lg-4 bg-login-image"></div>
+                                <div class="col-lg-8 p-5">
+                                    <div class="text-center">
+                                        <h1 class="h4 text-primary mb-4">LANDING CMS LOGIN</h1>
+                                    </div>
+                                    <form class="user" th:action="@{/login-proc}" method="post">
+                                        <input type="hidden" th:value="${errorMsg}" id="error">
+                                        <div class="input-form form-group">
+                                            <input type="text" class="form-control form-control-user"
+                                                   id="memberId" aria-describedby="emailHelp" name="memberId"
+                                                   placeholder="ID" th:value="${memberId}">
+                                            <label class="form-label" for="memberId">ID</label>
+                                        </div>
+                                        <div class="input-form form-group pwd">
+                                            <input type="password" class="form-control form-control-user"
+                                                   id="password" name="password" placeholder="Password">
+                                            <label class="form-label" for="password">Password</label>
+                                        </div>
+                                        <div class="input-form form-group">
+                                            <div class="form-check">
+                                                <label class="form-check-label text-muted">
+                                                    <input type="checkbox" class="form-check-input" name="remember-me">
+                                                     Keep me signed in
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <div class="input-form form-group">
+                                            <button type="submit" class="btn btn-outline-primary btn-user btn-block">로그인</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    $(function () {
+        if($('#error').val().length > 1) {
+            showAlert($('#error').val());
+        }
+    })
+
+    function showAlert(msg) {
+        $(".alert").alert("close")
+
+        let alert_elem = "<div class='alert alert-danger alert-dismissible' role='alert'>"
+        alert_elem += "<span>" + msg + "</span>"
+        alert_elem += "</div>"
+
+        $(".pwd").after(alert_elem).show('slow')
+
+        let time = 6
+
+        $('.alert-danger').click(function () {
+            $('.alert-danger').remove()
+        });
+
+        let x = setInterval(function () {
+            time--
+            if(time < 3) {
+                $('.alert-danger').hide('fast')
+            }
+            if(time < 0) {
+                clearInterval(x)
+                $('.alert-danger').remove()
+            }
+        }, 1000);
+    }
+</script>
+</html>

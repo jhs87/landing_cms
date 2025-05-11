@@ -1,0 +1,22 @@
+name: build
+
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [8, 11, 17, 21]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: gradle/wrapper-validation-action@v2
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: ${{ matrix.java-version }}
+      - run: ./gradlew :thymeleaf-layout-dialect:build
+      - run: ./gradlew jacocoTestReport
+      - uses: codecov/codecov-action@v4
+        with:
+          directory: thymeleaf-layout-dialect/build/reports/jacoco/
+          token: ${{ secrets.CODECOV_TOKEN }}

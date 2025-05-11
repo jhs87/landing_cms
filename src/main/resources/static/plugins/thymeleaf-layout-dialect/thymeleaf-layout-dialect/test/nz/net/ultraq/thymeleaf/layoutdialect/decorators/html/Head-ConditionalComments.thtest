@@ -1,0 +1,36 @@
+
+# Test that conditional comments make it through when merged from content page
+# to decorator page
+
+%TEMPLATE_MODE HTML
+
+
+%INPUT
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Layout}">
+<head>
+	<title>Content page</title>
+	<script src="content-script.js"></script>
+	<!--[if lte IE9]><script src="content-script-ie.js"></script><![endif]-->
+</head>
+</html>
+
+
+%INPUT[Layout]
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+</html>
+
+
+%OUTPUT
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Content page</title>
+	<script src="content-script.js"></script>
+	<!--[if lte IE9]><script src="content-script-ie.js"></script><![endif]-->
+</head>
+</html>

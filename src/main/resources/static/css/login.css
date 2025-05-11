@@ -1,0 +1,11 @@
+@media (min-width: 980px) {
+    .login-area {
+        max-width: 60%;
+    }
+}
+
+@media (min-width: 1920px) {
+    .login-area {
+        max-width: 35%;
+    }
+}

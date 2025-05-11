@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray"><i class="bi bi-file-earmark-break-fill mr-1"></i> 랜딩</h1>
+    </div>
+    <span class="text-gray">페이지 <i class="mx-1 bi bi-caret-right-square"></i></span>
+    <span class="text-gray-800 font-weight-bold">생성</span>
+    <hr class="sidebar-divider my-2">
+    <div class="row py-3">
+        <div class="col-xl-9">
+            <div class="card border-left-primary shadow h-100">
+                <form method="post" th:action="@{/landing}">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-info-square-fill mr-2"></i> 랜딩페이지 생성</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label class="d-inline-flex" for="title">랜딩 페이지명</label>
+                            </div>
+                            <div class="d-inline-flex w-75">
+                                <input type="text" class="w-100 border-bottom-1 px-2" name="title" id="title">
+                            </div>
+                        </div>
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label for="type">랜딩 타입</label>
+                            </div>
+                            <div class="d-inline-flex w-75">
+                                <select class="form-select" name="type" id="type">
+                                    <option value="DATA">JSON데이터</option>
+                                    <option value="BOARD">게시판</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label for="url">랜딩 주소</label>
+                            </div>
+                            <div class="d-inline-flex w-75">
+                                <input type="text" class="w-100 border-bottom-1 px-2" name="url" id="url">
+                            </div>
+                        </div>
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label for="startDate">시작/종료일</label>
+                            </div>
+                            <div class="d-inline-flex w-75">
+                                <input type="datetime-local" class="w-50 border-bottom-1 px-2" id="startDate" name="startDate">
+                                <span>~</span>
+                                <input type="datetime-local" class="w-50 border-bottom-1 px-2" id="endDate" name="endDate">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="input_area">
+                            <button type="submit" class="btn btn-primary w-100 text-center">완료</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+</script>
+</html>

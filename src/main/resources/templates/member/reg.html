@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray"><i class="bi bi-people-fill mr-1"></i> 사용자</h1>
+    </div>
+    <span class="text-gray">사용자 <i class="mx-1 bi bi-caret-right-square"></i></span>
+    <span class="text-gray-800 font-weight-bold">생성</span>
+    <hr class="sidebar-divider my-2">
+    <div class="row py-3">
+        <div class="col-xl-9">
+            <div class="card border-left-primary shadow h-100">
+                <form method="post" th:action="@{/members}" id="memberRegForm">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-info-square-fill mr-2"></i> 사용자 생성</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label class="d-inline-flex" for="memberId">아이디</label>
+                            </div>
+                            <div class="d-inline-flex w-75">
+                                <input type="text" class="w-100 border-bottom-1 px-2" name="memberId" id="memberId" placeholder="영문, 숫자만 입력 가능 합니다">
+                            </div>
+                        </div>
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label for="password">비밀번호</label>
+                            </div>
+                            <div class="d-inline-flex w-75">
+                                <input type="password" class="w-100 border-bottom-1 px-2" name="password" id="password" placeholder="6글자 이상 입력해 주세요">
+                            </div>
+                        </div>
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label for="password2">비밀번호 확인</label>
+                            </div>
+                            <div class="d-inline-flex w-75 position-relative">
+                                <input type="password" class="w-100 border-bottom-1 px-2" name="password2" id="password2" placeholder="비밀번호를 한번 더 입력해 주세요">
+                                <span class="position-absolute right-1" id="pwdCheck"></span>
+                            </div>
+                        </div>
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label for="name">이름</label>
+                            </div>
+                            <div class="d-inline-flex w-75">
+                                <input type="text" class="w-100 border-bottom-1 px-2" name="name" id="name">
+                            </div>
+                        </div>
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label for="phone">연락처</label>
+                            </div>
+                            <div class="d-inline-flex w-75">
+                                <input type="text" class="w-100 border-bottom-1 px-2" name="phone" id="phone" placeholder="숫자만 입력해 주세요">
+                            </div>
+                        </div>
+                        <div class="form-group d-flex">
+                            <div class="d-inline-flex w-25">
+                                <label for="authRole">권한</label>
+                            </div>
+                            <div class="d-inline-flex w-75">
+                                <select class="w-100 d-flex border-bottom-1 px-2" name="authRole" id="authRole">
+                                    <option value="LANDING-MANAGER">랜딩 관리자</option>
+                                    <option value="ADMIN">최고 관리자</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="input_area">
+                            <button type="button" class="btn btn-primary w-100 text-center" id="userReg">완료</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    const header = $("meta[name='_csrf_header']").attr('content');
+    const token = $("meta[name='_csrf']").attr('content');
+    $(function () {
+        $('#userReg').on('click', function () {
+            console.log($('#memberId').val().replaceAll(" ", "").length)
+            if ($('#memberId').val().replaceAll(" ", "").length < 3) {
+                alert("아이디는 3글자 이상이어야 합니다.")
+                $('#memberId').focus()
+            } else if ($('#password').val().replaceAll(" ", "").length < 6) {
+                alert("비밀번호는 6글자 이상이어야 합니다.")
+                $('#password').focus()
+            } else if ($('#password').val() !== $('#password2').val()) {
+                alert("입력하신 비밀번호가 일치하지 않습니다.")
+                $('#password2').focus()
+            } else {
+                let memberId = $('#memberId').val().replaceAll(" ", "")
+                $.ajax ({
+                    type: "get",
+                    url: "/members/idCheck",
+                    data: {
+                        memberId : memberId,
+                    },
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success: function (result) {
+                        if(result == "idCheck") {
+                            alert("동일한 ID가 있습니다.")
+                            return false
+                        } else {
+                            if ($('#phone').val().length > 9) {
+                                $('#phone').val($('#phone').val().replaceAll("-", ""))
+                            }
+                            $('#memberRegForm').submit();
+                        }
+                    },
+                    error: function (request, status, error) {
+                        alert(error)
+                    }
+                })
+            }
+        })
+
+        $('#memberId').on('keyup', function () {
+            $('#memberId').val($('#memberId').val().replaceAll(" ", ""))
+            $('#memberId').val(($('#memberId').val().replace(/[ㄱ-힣~!@#$%^&*()_+|<>?:{}= ]/g, "")))
+        })
+
+        $('#password').on('keyup', function () {
+            $('#password').val($('#password').val().replaceAll(" ", ""))
+            let pwd = $('#password').val()
+            let pwd2 = $('#password2').val()
+            if(pwd === pwd2) {
+                $('#pwdCheck').text("입력하신 비밀번호가 일치합니다.").css('color', '#4e73df')
+            } else {
+                $('#pwdCheck').text("입력하신 비밀번호가 일치하지 않습니다.").css('color', '#ff253a')
+            }
+        })
+
+        $('#password2').on('keyup', function () {
+            $('#password2').val($('#password2').val().replaceAll(" ", ""))
+            let pwd = $('#password').val()
+            let pwd2 = $('#password2').val()
+            if(pwd === pwd2) {
+                $('#pwdCheck').text("입력하신 비밀번호가 일치합니다.").css('color', '#4e73df')
+            } else {
+                $('#pwdCheck').text("입력하신 비밀번호가 일치하지 않습니다.").css('color', '#ff253a')
+            }
+        })
+
+        $('#phone').on('keyup', function () {
+            $('#phone').val( $(this).val().replace(/[^0-9]/g, "").replace(/(^02|^0505|^1[0-9]{3}|^0[0-9]{2})([0-9]+)?([0-9]{4})$/,"$1-$2-$3").replace("--", "-") )
+        })
+    })
+</script>
+</html>

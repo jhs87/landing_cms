@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+<div class="container-fluid">
+    <link rel="stylesheet" th:href="@{/plugins/summernote/summernote-lite.css}">
+    <link rel="stylesheet" th:href="@{/css/summernoteEdit.css}">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray"><i class="bi bi-people-fill mr-1"></i> 게시판</h1>
+    </div>
+    <div class="d-flex justify-content-between">
+        <div class="text-left">
+            <span class="text-gray">게시글 <i class="mx-1 bi bi-caret-right-square"></i></span>
+            <span class="text-gray-800 font-weight-bold" th:text="${boardTitle + ' 목록'}"></span>
+        </div>
+        <form id="downloadForm" th:action="@{/excelDownload}" method="get">
+            <input type="hidden" name="lNo" th:value="${lNo}">
+            <button class="btn btn-outline-dark m-0" id="excelDown"><i class="bi bi-download mr-1"></i>엑셀 다운로드</button>
+        </form>
+    </div>
+    <hr class="sidebar-divider my-2">
+    <div class="row py-3">
+        <div class="col-xl-12">
+            <div class="card border-left-primary shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-card-list mr-2"></i> 게시글 목록</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table-borderless w-100 text-center" id="dataTable">
+                        <thead class="table-header">
+                        <tr>
+                            <th class="text-center py-1 pr-2" width="7%">
+                                <button onclick="event.stopPropagation()" type="button" class="btn allCheck" id="allCheck"></button>
+                            </th>
+                            <th class="text-center pr-2" width="10%">작성자</th>
+                            <th class="text-center pr-2" width="35%">제목</th>
+                            <th class="text-center pr-2" width="10%">비밀글</th>
+                            <th class="text-center pr-2" width="15%">등록일</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:if="${list != null}" class="details-table text-center board-view" th:each="item : ${list}" th:data-id="${item.bNo}">
+                            <td>
+                                <input class="noCheck" type="checkbox" th:id="${'check' + item.bNo}" th:value="${item.bNo}">
+                                <label th:for="${'check' + item.bNo}" class="checkLabel"></label>
+                            </td>
+                            <td th:text="${item.regMember}" data-bs-toggle="modal" data-bs-target="#modal-boardInfo">hasoo</td>
+                            <td th:text="${item.title}" data-bs-toggle="modal" data-bs-target="#modal-boardInfo">제목</td>
+                            <td th:text="${item.secretYn ? '비밀글' : '일반'}" data-bs-toggle="modal" data-bs-target="#modal-boardInfo">일반</td>
+                            <td th:text="${#temporals.format(item.regDate,'yyyy-MM-dd HH:mm:ss')}" data-bs-toggle="modal" data-bs-target="#modal-boardInfo">2025-05-11 11:11:11</td>
+                        </tr>
+                        <tr th:if="${list == null}" class="details-table">
+                            <td colspan="7">데이터가 존재하지 않습니다.</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="card-footer">
+                    <button class="btn btn-outline-danger btn-sm" type="button" id="delBtn">삭제</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-boardInfo" tabindex="-1" role="dialog" aria-labelledby="modal-boardInfo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered info-view" role="document">
+        <input type="hidden" id="name" th:value="${#authentication.principal?.name}">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 id="header-text">게시글 보기</h5>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <input type="hidden" name="bNo" id="bNo">
+                    <input type="hidden" name="lNo" id="lNo" th:value="${lNo}">
+                    <div class="form-group">
+                        <label for="title">제목</label>
+                        <p class="w-100 border-bottom-1 px-2" id="title"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="regMember">작성자</label>
+                        <p class="w-100 border-bottom-1 px-2" id="regMember"></p>
+                    </div>
+                    <div class="form-group">
+                        <label for="contents">내용</label>
+                        <p class="border-1 w-100 h-100 p-2 white-space" style="min-height: 2em" id="contents"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary closeBtn" data-bs-dismiss="modal">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/plugins/summernote/summernote-lite.min.js}"></script>
+<script th:src="@{/js/custom-util.js}"></script>
+<script>
+    $(function () {
+        const header = $("meta[name='_csrf_header']").attr('content');
+        const token = $("meta[name='_csrf']").attr('content');
+        // initSummernote('#contents');
+
+        $('#dataTable').DataTable({
+            info: true,
+            stateSave: true,
+            lengthChange: false,
+            order: [4, 'desc'],
+            ordering: true,
+            serverSide: false,
+            columnDefs: [{ "targets": [0], "orderable": false }],
+            // 한 페이지당 표시 수
+            lengthMenu: [10],
+            // 언어 설정
+            language: {
+                url: "/demo/lang/ko.json"
+            }
+        })
+
+        $('#allCheck').on('click', function () {
+            let check = $('.noCheck').is(':checked')
+            if(check) {
+                $('.noCheck').attr('checked', false)
+                $('.noCheck').prop('checked', false)
+            } else {
+                $('.noCheck').attr('checked', true)
+                $('.noCheck').prop('checked', true)
+            }
+        })
+
+        $('.board-view').on('click', function () {
+            let bNo = $(this).data('id')
+            $.ajax ({
+                type: "get",
+                url: "/boards/reg",
+                data: {
+                    bNo : bNo
+                },
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (result) {
+                    $('#title').text(result.title)
+                    $('#regMember').text(result.regMember)
+                    $('#contents').text(result.contents)
+                    // initSummernote('#contents')
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                    location.reload();
+                }
+            })
+        })
+
+        $('#delBtn').on('click', function () {
+            let checkBno = Array()
+            $(".noCheck:checked").each(function() {
+                checkBno.push(($(this).val()))
+            })
+            if(checkBno.length > 0) {
+                $.ajax ({
+                    type: "delete",
+                    url: "/boards",
+                    data: {
+                        bNoList : checkBno
+                    },
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success: function (result) {
+                        location.reload()
+                    },
+                    error: function (request, status, error) {
+                        alert(error)
+                        location.reload()
+                    }
+                })
+            }
+        })
+
+        $('#noticeYn').change(function(){
+            this.value = (Number(this.checked));
+        })
+
+        $('#excelDown').on('click', function () {
+            loading.addClass('show')
+            $('#downloadForm').submit()
+            loading.removeClass('show')
+        })
+
+    })
+</script>
+</html>

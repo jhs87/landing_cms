@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+<!-- Begin Page Content -->
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+    </div>
+    <!-- Content Row -->
+    <div class="row">
+        <!-- Pie Chart -->
+        <div class="col-xl-9 col-lg-7">
+            <div class="card border-left-primary shadow mb-4">
+                <!-- Card Header - Dropdown -->
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">페이지별 참여 통계</h6>
+                </div>
+                <!-- Card Body -->
+                <div class="card-body d-flex">
+                    <div class="col-xl-12 pt-2">
+                        <canvas id="myChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Page level plugins -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<script th:src="@{/demo/chart.js}"></script>
+<script th:inline="javascript">
+    const chartList = [[${list}]]
+    $(function () {
+        chart($('#myChart'))
+        $('#landingStat').on('change', function () {
+            $('#statistics').css('width', (Math.floor(($(this).val()*100) / $('#maxCount').val())) + '%')
+            $('#chartValue').text($(this).val() + ' 명')
+        })
+    })
+</script>
+<!-- /.container-fluid -->
+</html>

@@ -1,0 +1,22 @@
+
+# Test the merging of the DOCTYPE, so that the result always tries to have one.
+
+%TEMPLATE_MODE HTML
+
+
+%INPUT
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Layout}">
+</html>
+
+
+%INPUT[Layout]
+<!DOCTYPE html>
+<html>
+</html>
+
+
+%OUTPUT
+<!DOCTYPE html>
+<html>
+</html>

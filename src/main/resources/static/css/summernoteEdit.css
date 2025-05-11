@@ -1,0 +1,7 @@
+.dropdown-toggle::after {
+    all: unset;
+}
+
+.note-dropdown-menu, .note-modal-footer {
+    box-sizing: content-box;
+}

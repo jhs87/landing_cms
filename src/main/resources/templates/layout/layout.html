@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <title>Landing-CMS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="_csrf_header" th:content="${_csrf.headerName}">
+    <meta name="_csrf" th:content="${_csrf.token}">
+    <link rel="icon" th:href="@{/img/favicon.ico}" type="image/x-icon">
+
+    <!-- Custom fonts for this template-->
+    <link th:href="@{/plugins/fontawesome-free/css/all.min.css}" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+    <!-- Custom styles for this template-->
+    <link th:href="@{/css/admin.min.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/landing-custom.css}" rel="stylesheet" type="text/css">
+    <link th:href="@{/css/bootstrap-multiselect.css}" rel="stylesheet" type="text/css">
+    <!-- Bootstrap Icon styles-->
+    <link th:href="@{/plugins/bootstrap-icons/bootstrap-icons.css}" rel="stylesheet">
+    <link href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" rel="stylesheet">
+    <script type="text/javascript" th:src="@{/plugins/fontawesome-free/js/all.min.js}"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/jquery/latest/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+</head>
+<body id="page-top">
+    <div id="wrapper">
+        <!--Sidebar-->
+        <th:block th:replace="~{fragment/sidebar :: sideBarFragment}"></th:block>
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                <!-- header fragment 사용 -->
+                <th:block th:replace="~{fragment/header :: headerFragment}"></th:block>
+                <!-- content fragment 사용 -->
+                <th:block layout:fragment="content"></th:block>
+            </div>
+            <!-- footer fragment 사용 -->
+            <th:block th:replace="~{fragment/footer :: footerFragment}"></th:block>
+        </div>
+        <!-- Scroll to Top Button-->
+        <a class="scroll-to-top rounded" href="#page-top">
+            <i class="fas fa-angle-up"></i>
+        </a>
+        <!-- Loading -->
+        <div class="mfp-loading">
+            <div class="content" id="loadingContent">
+                <div class="loadingIcon">
+                    <i class="bi bi-arrow-clockwise fa-2x text-secondary"></i>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Logout -->
+        <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="logoutAlarm"
+             aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="logoutAlarm">알림</h5>
+                        <button type="button" class="btn py-0 px-0 borderless modal-close" data-bs-dismiss="modal" aria-label="Close">
+                            <i class="bi bi-x-square"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>로그아웃 하시겠습니까?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">아니요</button>
+                        <a th:href="@{/logout}" class="btn btn-danger">네</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="modal-infoView" tabindex="-1" role="dialog" aria-labelledby="modal-infoView" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered info-view" role="document">
+                <div class="modal-content">
+                    <form role="form" id="memberForm" method="post" th:action="@{/members/edit}">
+                        <div class="modal-header">
+                            <h5>사용자 정보</h5>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card-body">
+                                <input type="hidden" name="mNo" id="mNo">
+                                <div class="form-group py-2">
+                                    <label for="memberId">사용자 ID</label>
+                                    <input type="text" class="w-100 border-bottom-1 px-2" id="memberId" name="memberId">
+                                </div>
+                                <div class="form-group py-2 w-100">
+                                    <label class="w-100" for="password">비밀번호 변경</label>
+                                    <div class="d-flex w-100">
+                                        <input type="password" class="w-100 border-bottom-1 px-2" id="password" name="password">
+                                        <button type="button" class="w-6rem btn btn-warning" id="pwdChange">저장</button>
+                                    </div>
+                                </div>
+                                <div class="form-group py-2">
+                                    <label for="name">사용자 이름</label>
+                                    <input type="text" class="w-100 border-bottom-1 px-2" id="name" name="name">
+                                </div>
+                                <div class="form-group py-2">
+                                    <label for="phone">사용자 연락처</label>
+                                    <input type="text" class="w-100 border-bottom-1 px-2" id="phone" name="phone">
+                                </div>
+                                <div class="form-group py-2" sec:authorize="hasRole('ADMIN')">
+                                    <label for="authRole">사용자 권한</label>
+                                    <select class="w-100 d-flex border-bottom-1 px-2" name="authRole" id="authRole">
+                                        <option value="LANDING-MANAGER">랜딩 관리자</option>
+                                        <option value="ADMIN">최고 관리자</option>
+                                    </select>
+                                </div>
+                                <div class="form-group py-2" sec:authorize="hasRole('ADMIN')">
+                                    <label for="landingKey">랜딩 권한</label>
+                                    <div class="card-body" id="landing-list">
+                                        <select class="form-control" name="landingKey" id="landingKey" multiple></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" onclick="myEdit()">수정</button>
+                            <button type="button" class="btn btn-secondary closeBtn" data-bs-dismiss="modal">닫기</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap core JavaScript-->
+    <script th:src="@{/plugins/bootstrap/js/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/js/bootstrap-multiselect.js}"></script>
+    <!-- Core plugin JavaScript-->
+    <script th:src="@{/plugins/jquery-easing/jquery.easing.min.js}"></script>
+    <!-- Custom scripts for all pages-->
+    <script th:src="@{/js/admin.min.js}"></script>
+    <script>
+        const loading = $('.mfp-loading')
+        function prev() {
+            history.back()
+        }
+
+        function myModal(id) {
+            let mNo = id
+            $.ajax ({
+                type: "get",
+                url: "/members/get",
+                dataType: "json",
+                data: {
+                    mNo : mNo,
+                },
+                success: function (result) {
+                    $('#mNo').val(mNo)
+                    $('#memberId').val(result.member[0].memberId)
+
+                    if(result.member[0].authRole != "ADMIN") {
+                        $('#memberId').prop('readonly', true)
+                    }
+
+                    $('#name').val(result.member[0].name)
+                    $('#phone').val(result.member[0].phone)
+                    $('#authRole').val(result.member[0].authRole).prop('selected', true)
+
+                    let landingKeyList = result.landingKey
+                    let landingList = result.landingList
+                    $('#landingKey option').remove()
+                    let html = ""
+
+                    landingList.forEach(function (item, i) {
+                        let selYn = false
+                        landingKeyList.forEach(function (key, i) {
+                            if(item.lno == key) selYn = true
+                        })
+                        if(selYn) {
+                            html += '<option value="'+ item.lno +'" selected="selected">' + item.title + '</option>'
+                        } else {
+                            html += '<option value="'+ item.lno +'">' + item.title + '</option>'
+                        }
+                    })
+                    
+                    $('#landingKey').append(html)
+                    $('#landingKey').multiselect("refresh")
+                },
+                error: function (request, status, error) {
+                    alert(error)
+                    location.reload()
+                }
+            })
+        }
+
+        function myEdit() {
+            let mNo = $('#mNo').val()
+            let memberId = $('#memberId').val()
+            let phone = $('#phone').val()
+            $.ajax ({
+                type: "get",
+                url: "/members/check",
+                data: {
+                    mNo : mNo,
+                    memberId : memberId,
+                    phone : phone,
+                },
+                success: function (result) {
+                    if(result == "idCheck") {
+                        alert("동일한 ID가 있습니다.")
+                        return false
+                    } else {
+                        $('#memberForm').submit()
+                    }
+                },
+                error: function (request, status, error) {
+                    alert(error)
+                }
+            })
+        }
+
+        $('#pwdChange').on('click', function () {
+            let mNo = $('#mNo').val()
+            let password = $('#password').val()
+            if(confirm("변경하시겠습니까?")) {
+                if(password.toString().replaceAll(" ", "").length < 8) {
+                    alert("비밀번호는 8자리 이상 입력해 주세요.")
+                } else {
+                    alert("저장 정보 : ", mNo, password)
+                    $.ajax ({
+                        type: "put",
+                        url: "/members/pwd",
+                        data: {
+                            mNo : mNo,
+                            password: password
+                        },
+                        success: function (result) {
+                            $('#password').val("")
+                            alert("비밀번호가 변경되었습니다.")
+                        },
+                        error: function (request, status, error) {
+                            alert(request)
+                            location.reload()
+                        }
+                    })
+                }
+            }
+        })
+
+    </script>
+</body>
+</html>

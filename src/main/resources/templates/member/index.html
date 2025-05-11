@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray"><i class="bi bi-people-fill mr-1"></i> 사용자</h1>
+    </div>
+    <span class="text-gray">사용자 <i class="mx-1 bi bi-caret-right-square"></i></span>
+    <span class="text-gray-800 font-weight-bold">목록</span>
+    <hr class="sidebar-divider my-2">
+    <div class="row py-3">
+        <div class="col-xl-12">
+            <div class="card border-left-primary shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-card-list mr-2"></i> 사용자 목록</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table-borderless w-100 text-center" id="listTable">
+                        <thead class="table-header">
+                        <tr>
+                            <th class="text-center py-1 pr-2" width="10%">No</th>
+                            <th class="text-center pr-2" width="30%">ID</th>
+                            <th class="text-center pr-2" width="20%">이름</th>
+                            <th class="text-center pr-2" width="20%">권한</th>
+                            <th class="text-center pr-2" width="20%">상태</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="details-table text-center" th:each="item : ${list}" th:data-id="${item.mNo}"
+                            data-bs-toggle="modal" data-bs-target="#modal-infoView">
+                            <td class="py-1" th:text="${item.mNo}">0</td>
+                            <td th:text="${item.memberId}">erum</td>
+                            <td th:text="${item.name}">이룸</td>
+                            <td th:text="${item.authRole eq 'ADMIN' ? '최고 관리자' : '랜딩 관리자'}">관리자</td>
+                            <td th:text="${item.status eq 1 ? '정상' : '미사용'}">정상</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" th:inline="javascript">
+    $(function () {
+        $('#listTable').DataTable({
+            info: true,
+            stateSave: true,
+            lengthChange: false,
+            order: [0, 'desc'],
+            ordering: true,
+            serverSide: false,
+            // 한 페이지당 표시 수
+            lengthMenu: [10],
+            // 언어 설정
+            language: {
+                url: "/demo/lang/ko.json"
+            }
+        });
+
+        $('.details-table').on('click', function () {
+            myModal($(this).data("id"))
+        })
+
+    })
+</script>
+</html>

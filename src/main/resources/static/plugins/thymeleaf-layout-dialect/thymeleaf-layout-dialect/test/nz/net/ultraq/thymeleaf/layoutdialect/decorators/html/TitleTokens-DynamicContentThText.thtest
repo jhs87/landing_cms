@@ -1,0 +1,41 @@
+
+# Test using standard Thymeleaf expression syntax for title elements.
+
+%TEMPLATE_MODE HTML
+
+%CONTEXT
+layoutTitle  = "My website"
+contentTitle = "My blog"
+
+%INPUT
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{Layout}">
+<head>
+	<title th:text="${contentTitle}" layout:title="|${layoutDialectContentTitle} - ${layoutDialectLayoutTitle}|">Content title</title>
+</head>
+<body>
+  <p th:text="${layoutDialectContentTitle}">I can use the content title here too!</p>
+  <p th:text="${layoutDialectLayoutTitle}">I can use the layout title here too!</p>
+</body>
+</html>
+
+%INPUT[Layout]
+<!DOCTYPE html>
+<html>
+<head>
+	<title th:text="${layoutTitle}">Layout title</title>
+</head>
+</html>
+
+%OUTPUT
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My blog - My website</title>
+</head>
+<body>
+  <p>My blog</p>
+  <p>My website</p>
+</body>
+</html>

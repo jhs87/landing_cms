@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<div class="pagination" th:fragment="etcPagination (list, url)" th:with="pageNumber = ${list.pageable.pageNumber}, pageSize = ${list.pageable.pageSize},
+    totalPages = ${list.totalPages}, startPage = ${T(Math).floor(pageNumber / pageSize) * pageSize + 1}, tempEndPage = ${startPage + pageSize - 1},
+    endPage = (${tempEndPage > totalPages ? totalPages : tempEndPage})">
+
+    <a th:unless="${pageNumber + 1 <= pageSize + 1}" th:href="@{__${url}__(page=0, type=${type}, searchStartDate=${search.searchStartDate},
+        searchEndDate=${search.searchEndDate}, searchType=${search.searchType}, searchText=${search.searchText}, searchStatus=${search.searchStatus},
+        searchSort=${search.searchSort})}">&lt;&lt;</a>
+
+    <a th:href="${list.first} ? 'javascript:void(0);' : @{__${url}__(page=${pageNumber - 1}, type=${type}, searchStartDate=${search.searchStartDate},
+        searchEndDate=${search.searchEndDate}, searchType=${search.searchType}, searchText=${search.searchText}, searchStatus=${search.searchStatus},
+        searchSort=${search.searchSort})}">&lt;</a>
+
+    <a th:unless="${endPage < 1}" th:each="page : ${#numbers.sequence(startPage, endPage)}" th:class="${page == pageNumber + 1} ? 'active'"
+       th:href="${page == pageNumber + 1} ? 'javascript:void(0);' : @{__${url}__(page=${page - 1}, type=${type}, searchStartDate=${search.searchStartDate},
+       searchEndDate=${search.searchEndDate}, searchType=${search.searchType}, searchText=${search.searchText}, searchStatus=${search.searchStatus},
+       searchSort=${search.searchSort})}" th:text="${page}">1</a>
+
+    <a th:href="${list.last} ? 'javascript:void(0);' : @{__${url}__(page=${pageNumber + 1}, type=${type}, searchStartDate=${search.searchStartDate},
+        searchEndDate=${search.searchEndDate}, searchType=${search.searchType}, searchText=${search.searchText}, searchStatus=${search.searchStatus},
+        searchSort=${search.searchSort})}">&gt;</a>
+
+    <a th:unless="${T(Math).floor(totalPages/10)*10 <= startPage} or ${(pageNumber + 1) eq totalPages}" th:href="@{__${url}__(page=${totalPages - 1},
+        type=${type}, searchStartDate=${search.searchStartDate}, searchEndDate=${search.searchEndDate}, searchType=${search.searchType},
+        searchText=${search.searchText}, searchStatus=${search.searchStatus}, searchSort=${search.searchSort})}">&gt;&gt;</a>
+
+</div>
+<!-- Board 페이징 처리 -->
+<div class="pagination" th:fragment="pagination (list)" th:with="pageNumber = ${list.pageable.pageNumber}, pageSize = ${list.pageable.pageSize},
+    totalPages = ${list.totalPages}, startPage = ${T(Math).floor(pageNumber / pageSize) * pageSize + 1}, tempEndPage = ${startPage + pageSize - 1},
+    endPage = (${tempEndPage > totalPages ? totalPages : tempEndPage})">
+
+    <a th:unless="${pageNumber + 1 <= pageSize + 1}" th:href="@{/board/{type}(page=0, type=${type}, searchStartDate=${search.searchStartDate},
+        searchEndDate=${search.searchEndDate}, searchType=${search.searchType}, searchText=${search.searchText}, searchStatus=${search.searchStatus},
+        searchSort=${search.searchSort})}">&lt;&lt;</a>
+
+    <a th:href="${list.first} ? 'javascript:void(0);' : @{/board/{type}(page=${pageNumber - 1}, type=${type}, searchStartDate=${search.searchStartDate},
+        searchEndDate=${search.searchEndDate}, searchType=${search.searchType}, searchText=${search.searchText}, searchStatus=${search.searchStatus},
+        searchSort=${search.searchSort})}">&lt;</a>
+
+    <a th:unless="${endPage < 1}" th:each="page : ${#numbers.sequence(startPage, endPage)}" th:class="${page == pageNumber + 1} ? 'active'"
+       th:href="${page == pageNumber + 1} ? 'javascript:void(0);' : @{/board/{type}(page=${page - 1}, type=${type}, searchStartDate=${search.searchStartDate},
+        searchEndDate=${search.searchEndDate}, searchType=${search.searchType}, searchText=${search.searchText}, searchStatus=${search.searchStatus},
+        searchSort=${search.searchSort})}" th:text="${page}">1</a>
+
+    <a th:href="${list.last} ? 'javascript:void(0);' : @{/board/{type}(page=${pageNumber + 1}, type=${type}, searchStartDate=${search.searchStartDate},
+        searchEndDate=${search.searchEndDate}, searchType=${search.searchType}, searchText=${search.searchText}, searchStatus=${search.searchStatus},
+        searchSort=${search.searchSort})}">&gt;</a>
+
+    <a th:unless="${T(Math).floor(totalPages/10)*10 <= startPage} or ${(pageNumber + 1) eq totalPages}" th:href="@{/board/{type}(page=${totalPages - 1},
+        type=${type}, searchStartDate=${search.searchStartDate}, searchEndDate=${search.searchEndDate}, searchType=${search.searchType},
+        searchText=${search.searchText}, searchStatus=${search.searchStatus}, searchSort=${search.searchSort})}">&gt;&gt;</a>
+</div>
+</html>

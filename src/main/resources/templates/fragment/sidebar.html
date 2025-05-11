@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<!-- Sidebar -->
+<div class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" th:fragment="sideBarFragment">
+    <!-- Sidebar - Brand -->
+    <a class="sidebar-brand d-flex align-items-center justify-content-center mr-3" href="/" onclick="loadingStart()">
+        <div class="sidebar-brand-icon mr-1">
+            <img class="rounded-pill" th:src="@{/img/favicon.ico}" width="22px">
+        </div>
+        <div class="sidebar-brand-text mx-6" sec:authentication="principal.username"></div>
+        <sup>CMS</sup>
+    </a>
+    <!-- Divider -->
+    <hr class="sidebar-divider my-0">
+    <!-- Nav Item - Dashboard -->
+    <div class="nav-item" th:classappend="${currentPage.endsWith('/') ? 'active':''}">
+        <a class="nav-link" href="/" onclick="loadingStart()">
+            <i class="bi bi-speedometer"></i>
+            <span>Dashboard</span></a>
+    </div>
+    <!-- Divider -->
+    <hr class="sidebar-divider">
+    <th:block th:if="${#lists.size(landingList) > 0}">
+        <!-- Heading -->
+        <div class="sidebar-heading">Data : <span th:text="${#lists.size(landingList)}"></span>개</div>
+        <div class="nav-item" th:classappend="${currentPage.startsWith('/data') ? 'active':''}">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseOne"
+               aria-expanded="true" aria-controls="collapseOne">
+                <i class="bi bi-clipboard-fill"></i>
+                <span>페이지 목록</span>
+            </a>
+            <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-bs-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">데이터:</h6>
+                    <th:block th:each="landing: ${landingList}">
+                        <a class="collapse-item" th:classappend="${currentPage.endsWith('/data/'+landing.lNo) ? 'active':''}"
+                           th:href="@{/data/{lNo}(lNo = ${landing.lNo})}" th:text="${landing.title + ' 페이지'}">데이터</a>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+    </th:block>
+    <th:block th:if="${#lists.size(boardList) > 0}">
+        <!-- Nav Item - Utilities Collapse Menu -->
+        <div class="sidebar-heading" sec:authorize="hasRole('ADMIN')">Board : <span th:text="${#lists.size(boardList)}"></span>개</div>
+        <div class="nav-item" th:classappend="${currentPage.startsWith('/boards') ? 'active':''}" sec:authorize="hasRole('ADMIN')">
+            <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseBoard"
+               aria-expanded="true" aria-controls="collapseBoard">
+                <i class="bi bi-clipboard-fill"></i>
+                <span>게시판 목록</span>
+            </a>
+            <div id="collapseBoard" class="collapse" aria-labelledby="headingBoard" data-bs-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">게시글:</h6>
+                    <th:block th:each="board: ${boardList}">
+                        <a class="collapse-item" th:classappend="${currentPage.endsWith('/boards'+board.lNo) ? 'active':''}"
+                           th:href="@{/boards/{lNo}(lNo = ${board.lNo})}" th:text="${board.title + ' 목록'}">목록</a>
+                    </th:block>
+                </div>
+            </div>
+        </div>
+        <!-- Divider -->
+        <hr class="sidebar-divider">
+    </th:block>
+    <!-- Heading -->
+    <div class="sidebar-heading" sec:authorize="hasRole('ADMIN')">Lading</div>
+    <div class="nav-item" th:classappend="${currentPage.startsWith('/landing') ? 'active':''}" sec:authorize="hasRole('ADMIN')">
+        <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapseTwo"
+           aria-expanded="true" aria-controls="collapseTwo">
+            <i class="bi bi-file-earmark-break-fill"></i>
+            <span>랜딩페이지</span>
+        </a>
+        <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">랜딩페이지:</h6>
+                <a class="collapse-item" th:classappend="${currentPage.endsWith('/landing') ? 'active':''}"
+                   th:href="@{/landing}">랜딩페이지 목록</a>
+                <a class="collapse-item" th:classappend="${currentPage.endsWith('/landing/reg') ? 'active':''}"
+                   th:href="@{/landing/reg}">랜딩페이지 등록</a>
+                <div class="collapse-divider"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Divider -->
+    <hr class="sidebar-divider" sec:authorize="hasRole('ADMIN')">
+    <!-- Heading -->
+    <div class="sidebar-heading" sec:authorize="hasRole('ADMIN')">Users</div>
+    <!-- Nav Item - Pages Collapse Menu -->
+    <div class="nav-item" th:classappend="${currentPage.startsWith('/members') ? 'active':''}" sec:authorize="hasRole('ADMIN')">
+        <a class="nav-link collapsed" data-bs-toggle="collapse" data-bs-target="#collapsePages"
+           aria-expanded="true" aria-controls="collapsePages">
+            <i class="bi bi-people-fill"></i>
+            <span>사용자</span>
+        </a>
+        <div id="collapsePages" class="collapse" aria-labelledby="headingPages" data-bs-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">사용자:</h6>
+                <a class="collapse-item" th:classappend="${currentPage.endsWith('/members') ? 'active':''}"
+                   th:href="@{/members}">사용자 목록</a>
+                <a class="collapse-item" th:classappend="${currentPage.endsWith('/members/reg') ? 'active':''}"
+                   th:href="@{/members/reg}">사용자 생성</a>
+                <div class="collapse-divider"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Divider -->
+    <hr class="sidebar-divider d-none d-md-block" sec:authorize="hasRole('ADMIN')">
+</div>
+<!-- End of Sidebar -->
+</html>

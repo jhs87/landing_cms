@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/layout}"
+      layout:fragment="content">
+<div class="container-fluid">
+    <!-- Page Heading -->
+    <div class="d-sm-flex align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray"><i class="bi bi-file-earmark-break-fill mr-1"></i> 랜딩페이지</h1>
+    </div>
+    <span class="text-gray">랜딩 <i class="mx-1 bi bi-caret-right-square"></i></span>
+    <span class="text-gray-800 font-weight-bold">목록</span>
+    <hr class="sidebar-divider my-2">
+    <div class="row py-3">
+        <div class="col-xl-12">
+            <div class="card border-left-primary shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"><i class="bi bi-card-list mr-2"></i> 랜딩 목록</h6>
+                </div>
+                <div class="card-body">
+                    <table class="table-borderless w-100" id="listTable">
+                        <thead class="table-header">
+                        <tr>
+                            <th class="text-center py-1 pr-2" width="10%">No</th>
+                            <th class="text-center pr-2" width="20%">페이지명</th>
+                            <th class="text-center pr-2" width="10%">타입</th>
+                            <th class="text-center pr-2" width="25%">주소</th>
+                            <th class="text-center pr-2" width="10%">상태</th>
+                            <th class="text-center pr-2" width="25%">생성일</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="details-table text-center" th:each="item : ${list}" th:data-id="${item.lNo}">
+                            <td class="py-1" th:text="${item.lNo}" data-bs-toggle="modal" data-bs-target="#modal-landingInfo">0</td>
+                            <td th:text="${item.title}" data-bs-toggle="modal" data-bs-target="#modal-landingInfo">이룸랜딩</td>
+                            <td th:text="${item.type}" data-bs-toggle="modal" data-bs-target="#modal-landingInfo">타입</td>
+                            <td th:text="${item.url}" data-bs-toggle="modal" data-bs-target="#modal-landingInfo">주소</td>
+                            <td onclick="event.stopPropagation()">
+                                <div class="toggle-custom-control custom-switch list-checkbox">
+                                    <input type="checkbox" class="toggle-custom-control-input usedChecked" name="used"
+                                           th:checked="${item.used}" th:value="${item.used}" />
+                                </div>
+                            </td>
+                            <td th:text="${#temporals.format(item.regDate,'yyyy-MM-dd HH:mm:ss')}" data-bs-toggle="modal"
+                                data-bs-target="#modal-landingInfo">2023-04-24 12:12:12</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-landingInfo" tabindex="-1" role="dialog" aria-labelledby="modal-landingInfo" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered info-view" role="document">
+        <div class="modal-content">
+            <form role="form" th:action="@{/landing}" method="POST" id="landingForm">
+                <div class="modal-header">
+                    <h5>랜딩 정보</h5>
+                </div>
+                <div class="modal-body">
+                    <div class="card-body">
+                        <input type="hidden" name="lNo" id="lNo">
+                        <div class="form-group">
+                            <label for="title">랜딩 페이지명</label>
+                            <input type="text" class="w-100 border-bottom-1 px-2" id="title" name="title">
+                        </div>
+                        <div class="form-group">
+                            <label for="type">랜딩 타입</label>
+                            <select class="form-select" name="type" id="type">
+                                <option value="DATA">JSON데이터</option>
+                                <option value="BOARD">게시판</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="url">랜딩 주소</label>
+                            <input type="text" class="w-100 border-bottom-1 px-2" id="url" name="url">
+                        </div>
+                        <div class="form-group">
+                            <label class="w-100" for="startDate">시작/종료일</label>
+                            <div class="w-100 d-flex">
+                                <input type="datetime-local" class="w-50 border-bottom-1 px-2" id="startDate" name="startDate">
+                                <span>~</span>
+                                <input type="datetime-local" class="w-50 border-bottom-1 px-2" id="endDate" name="endDate">
+                            </div>
+                        </div>
+                        <div class="form-group d-none" id="dataKey-form">
+                            <label>데이터키</label>
+                            <div class="card-body">
+                                <table class="dataTable" id="dataKeyTable">
+                                    <thead>
+                                    <tr>
+                                        <th>키 영문명</th>
+                                        <th>키 한글명</th>
+                                        <th></th>
+                                    </tr>
+                                    </thead>
+                                    <tbody></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary regViewBtn" data-bs-toggle="modal"
+                            data-bs-target="#modal-dataKeyReg">키 등록</button>
+                    <button type="submit" class="btn btn-warning editBtn" data-bs-dismiss="modal">수정</button>
+                    <button type="button" class="btn btn-secondary closeBtn" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-dataKeyReg" tabindex="-1" role="dialog" aria-labelledby="modal-dataKeyReg" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5>데이터키 등록</h5>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <form method="post" th:action="@{/dataKey}">
+                        <table class="dataKey_area">
+                            <tr>
+                                <th width="40%">키 이름</th>
+                                <th width="40%">키 한글명</th>
+                                <th width="15%"></th>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-dark addBtn">추가</button>
+                <button type="button" class="btn btn-primary" id="regBtn" data-bs-toggle="modal" data-bs-target="#modal-landingInfo">등록</button>
+                <button type="button" class="btn btn-secondary closeBtn" data-bs-toggle="modal"
+                        data-bs-target="#modal-landingInfo">닫기</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    const header = $("meta[name='_csrf_header']").attr('content');
+    const token = $("meta[name='_csrf']").attr('content');
+
+    $(function () {
+        $('#listTable').DataTable({
+            info: true,
+            stateSave: true,
+            lengthChange: false,
+            order: [0, 'desc'],
+            ordering: true,
+            serverSide: false,
+            // 한 페이지당 표시 수
+            lengthMenu: [10],
+            // 언어 설정
+            language: {
+                url: "/demo/lang/ko.json"
+            }
+        })
+
+        $('.details-table').on('click', function () {
+            let lNo = $(this).data('id')
+            $.ajax ({
+                type: "get",
+                url: "/landing/info",
+                dataType: "json",
+                data: {
+                    lNo : lNo,
+                },
+                success: function (result) {
+                    $('#lNo').val(lNo)
+                    $('#title').val(result.landing.title)
+                    $('#type').val(result.landing.type).prop("selected", true)
+                    $('#url').val(result.landing.url)
+                    $('#startDate').val(result.landing.startDate)
+                    $('#endDate').val(result.landing.endDate)
+                    typeChange(result.landing.type)
+                    $.ajax ({
+                        type: "get",
+                        url: "/dataKey",
+                        dataType: "json",
+                        data: {
+                            lNo : lNo,
+                        },
+                        beforeSend: function(xhr){
+                            xhr.setRequestHeader(header, token);
+                        },
+                        success: function (result) {
+                            dataTableInit(result);
+                        },
+                        error: function (request, status, error) {
+                            alert(error);
+                            location.reload();
+                        }
+                    })
+                },
+                error: function (request, status, error) {
+                    alert(error);
+                    location.reload();
+                }
+            })
+        })
+
+        $('#type').on('change', function () {
+            typeChange($(this).val())
+        })
+
+        $('.regViewBtn').on('click', function () {
+            let lNo = $('#lNo').val()
+            $.ajax ({
+                type: "get",
+                url: "/dataKey",
+                dataType : "json",
+                data: {
+                    lNo : lNo,
+                },
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (result) {
+                    dataKeyInit()
+                    dataKeyTable(result)
+                },
+                error: function (request, status, error) {
+                    alert(error)
+                    location.reload()
+                }
+            })
+        })
+
+        $('.addBtn').on('click', function () {
+            let dataHtml = null;
+            dataHtml += '<tr class="data-input"><td><input type="text" class="input w-75 border-bottom-1 px-2" name="keyName" placeholder="키 이름"></td>'
+            dataHtml += '<td><input type="text" class="input w-75 border-bottom-1 px-2" name="korName" placeholder="키 한글명"></td>'
+            dataHtml += '<td><button type="button" class="btn btn-danger px-2" id="deleteKey" onclick="dataKeyRemove($(this))"><i class="bi bi-trash3-fill"></i></button></td></tr>'
+            $('.dataKey_area').append(dataHtml);
+        })
+
+        $('.editBtn').on('click', function () {
+
+        })
+
+        $('#regBtn').on('click', function () {
+            let keyNameList = []
+            let korNameList = []
+            $('input[name=keyName]').each(function (index, item) {
+                if($(item).val().replaceAll(" ", "").length > 1) {
+                    keyNameList.push($(item).val())
+                }
+            })
+            $('input[name=korName]').each(function (index, item) {
+                if($(item).val().replaceAll(" ", "").length > 1) {
+                    korNameList.push($(item).val())
+                }
+            })
+            if(keyNameList.length < 1) {
+                dataKeyInit()
+                alert("키 이름이 입력되지 않았거나 2글자 이하입니다.")
+                return false
+            } else if(korNameList.length < 1) {
+                dataKeyInit()
+                alert("키 한글명이 입력되지 않았거나 2글자 이하입니다.")
+                return false
+            } else {
+                let obj = {
+                    lNo: $('#lNo').val(),
+                    keyNameList : keyNameList,
+                    korNameList : korNameList
+                }
+                $.ajax ({
+                    type: "post",
+                    url: "/dataKey/save",
+                    dataType : "json",
+                    data: obj,
+                    beforeSend: function(xhr){
+                        xhr.setRequestHeader(header, token);
+                    },
+                    success: function (result) {
+                        dataKeyInit()
+                        dataTableInit(result)
+                    },
+                    error: function (request, status, error) {
+                        alert(error)
+                        location.reload()
+                    }
+                })
+            }
+        })
+
+        let useYn = $('.usedChecked')
+        useYn.val((Number(useYn.is(':checked'))))
+
+        useYn.on('change', function () {
+            this.value = (Number(this.value))
+        })
+
+        useYn.click(function () {
+            let id = $(this).closest('tr').data('id')
+            let used = $(this).is(':checked')
+            $.ajax ({
+                type: "patch",
+                url: "/landing/used",
+                data: {
+                    id : id,
+                    used : used
+                },
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (result) {},
+                error: function (request, status, error) {
+                    console.log(error)
+                }
+            })
+        })
+    })
+
+    function typeChange(type) {
+        if(type === "DATA") {
+            if($('#dataKey-form').hasClass("d-none")) {
+                $('#dataKey-form').removeClass("d-none")
+            }
+        } else {
+            if(!$('#dataKey-form').hasClass("d-none")) {
+                $('#dataKey-form').addClass("d-none")
+            }
+        }
+    }
+
+    function dataKeyRemove(key) {
+        $(key).closest('.data-input').remove()
+    }
+
+    function deleteDataKey(dkNo) {
+        if(confirm("키를 삭제하시겠습니까?")) {
+            let obj = {
+                lNo: Number($('#lNo').val()),
+                dkNo : dkNo
+            }
+            $.ajax ({
+                type: "delete",
+                url: "/dataKey/del",
+                data: obj,
+                beforeSend: function(xhr){
+                    xhr.setRequestHeader(header, token);
+                },
+                success: function (result) {
+                    dataTableInit(result)
+                },
+                error: function (request, status, error) {
+                    alert(error)
+                    location.reload()
+                }
+            })
+        }
+    }
+
+    function dataKeyInit() {
+        $('.dataKey_area').find('.data-input').remove()
+        /*$('.dataKey_area').find('input[name=keyName]').val("")
+        $('.dataKey_area').find('input[name=korName]').val("")
+        $('.dataKey_area').find('.data-input:gt(0)').empty()*/
+    }
+
+    function dataTableInit(result) {
+        let dataHtml = null
+        $.each(result, function (i) {
+            dataHtml += '<tr><td>' + result[i].keyName + '</td>'
+            dataHtml += '<td>' + result[i].korName + '</td>'
+            dataHtml += '<td><button class="btn btn-danger px-2" id="deleteKey" type="button" onclick="deleteDataKey(' + result[i].dkNo + ')"><i class="bi bi-trash3-fill"></i></button></td></tr>';
+        })
+        $('#dataKeyTable').DataTable().destroy()
+        $('#dataKeyTable tbody').empty()
+        $('#dataKeyTable tbody').append(dataHtml)
+        $('#dataKeyTable').removeAttr('width').DataTable({
+            info: false,
+            stateSave: true,
+            destroy: true,
+            lengthChange: false,
+            searching: false,
+            // 한 페이지당 표시 수
+            lengthMenu: [10],
+            // 언어 설정
+            language: {
+                url: '/demo/lang/ko.json'
+            }
+        })
+    }
+
+    function dataKeyTable(result) {
+        let dataHtml = null
+        if(result.length > 0) {
+            $.each(result, function (i) {
+                dataHtml += '<tr class="data-input"><td><input type="text" class="input w-75 border-bottom-1 px-2" name="keyName" placeholder="키 이름" value="'+ result[i].keyName +'"></td>'
+                dataHtml += '<td><input type="text" class="input w-75 border-bottom-1 px-2" name="korName" placeholder="키 한글명" value="'+ result[i].korName +'"></td>'
+                dataHtml += '<td><button class="btn btn-danger px-2" id="deleteKey" type="button" onclick="dataKeyRemove($(this))" value="'+ result[i].dkNo +'"><i class="bi bi-trash3-fill"></i></button></td></tr>'
+            })
+        } else {
+            dataHtml += '<tr class="data-input"><td><input type="text" class="input w-75 border-bottom-1 px-2" ' +
+                'name="keyName" placeholder="키 이름"></td><td><input type="text" class="input w-75 border-bottom-1 px-2" ' +
+                'name="korName" placeholder="키 한글명"></td><td><button class="btn btn-danger px-2" id="deleteKey" type="button" onclick="dataKeyRemove($(this))"><i class="bi bi-trash3-fill"></i></button></td></tr>'
+        }
+        $('.dataKey_area').append(dataHtml)
+    }
+
+</script>
+</html>
